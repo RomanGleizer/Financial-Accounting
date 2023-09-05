@@ -1,8 +1,5 @@
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
-using System.Collections.Generic;
-using System.Collections;
 
 public class OperationsCreator : MonoBehaviour
 {
@@ -18,18 +15,16 @@ public class OperationsCreator : MonoBehaviour
     [Header("History of operations")]
     [SerializeField] private RectTransform[] _history;
 
-    private List<Operation> _operations;
-    private MenuOpener _opener;
     private Operation _currentOperation;
+    private MenuOpener _opener;
     private int _operationsInHistoryCount;
-
-    public List<Operation> Operations => _operations;
 
     public TMP_Dropdown OperationType => _operationType;
 
-    private void Start()
+    public Operation CurrentOperation => _currentOperation;
+
+    private void Awake()
     {
-        _operations = new List<Operation>();
         _opener = GetComponent<MenuOpener>();
     }
 
@@ -40,7 +35,6 @@ public class OperationsCreator : MonoBehaviour
         var operation = new Operation(int.Parse(_sum.text), (OperationType)_operationType.value);
         _sum.text = string.Empty;
         _currentOperation = operation;
-        _operations.Add(operation);
 
         _opener.OpenMenu(_mainMenu);
         _opener.CloseMenu(_addOperationMenu);
@@ -54,8 +48,6 @@ public class OperationsCreator : MonoBehaviour
 
         if (operationType.TryGetComponent(out TMP_Text type))
         {
-            print(_operationType.value);
-
             var text = _operationType.options[_operationType.value].text + $" ({_categories.options[_categories.value].text})";
             type.text = text;
         }

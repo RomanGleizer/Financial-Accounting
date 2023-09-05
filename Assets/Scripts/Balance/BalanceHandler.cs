@@ -14,7 +14,7 @@ public class BalanceHandler : MonoBehaviour
     public void DoOperation()
     {
         _operationsCreator.CreatePurchaseOperation();
-        var operation = _operationsCreator.Operations.LastOrDefault();
+        var operation = _operationsCreator.CurrentOperation;
         if (operation == null) return;
 
         var sum = operation.Value;
