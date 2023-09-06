@@ -6,10 +6,17 @@ public class BalanceHandler : MonoBehaviour
 {
     [SerializeField] private TMP_Text _balanceText;
     [SerializeField] private OperationsCreator _operationsCreator;
+    [SerializeField] private KeyboardOpener _balanceKeyboard;
 
     private int _balance;
 
     public int Balance => _balance;
+
+    private void Update()
+    {
+        if (_balanceKeyboard.Keyboard.status is TouchScreenKeyboard.Status.Done)
+            ChangeBalanceValue();
+    }
 
     public void DoOperation()
     {
@@ -22,11 +29,19 @@ public class BalanceHandler : MonoBehaviour
         {
             case OperationType.Purchase: _balance -= sum;
                 break;
-            case OperationType.Add: _balance += sum;
+            case OperationType.Add: if (sum >= 0) _balance += sum;
                 break;
         }
 
         _operationsCreator.AddOperationInHistory();
         _balanceText.text = _balance.ToString() + " RUB";
+    }
+
+    private void ChangeBalanceValue()
+    {
+        if (!int.TryParse(_balanceKeyboard.Keyboard.text, out _)) return;
+
+        _balance = int.Parse(_balanceKeyboard.Keyboard.text);
+        _balanceText.text = _balanceKeyboard.Keyboard.text + " RUB";
     }
 }

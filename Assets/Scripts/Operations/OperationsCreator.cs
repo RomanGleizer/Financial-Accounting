@@ -42,13 +42,13 @@ public class OperationsCreator : MonoBehaviour
 
     public void AddOperationInHistory()
     {
-        if (_operationsInHistoryCount == 3) _operationsInHistoryCount = 0;
+        if (_operationsInHistoryCount == 5) _operationsInHistoryCount = 0;
         var operationType = _history[_operationsInHistoryCount].GetChild(1);
         var operationSum = _history[_operationsInHistoryCount].GetChild(2);
 
         if (operationType.TryGetComponent(out TMP_Text type))
         {
-            var text = _operationType.options[_operationType.value].text + $" ({_categories.options[_categories.value].text})";
+            var text = _operationType.options[_operationType.value].text;
             type.text = text;
         }
 
