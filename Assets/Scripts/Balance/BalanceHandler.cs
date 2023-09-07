@@ -14,13 +14,13 @@ public class BalanceHandler : MonoBehaviour
 
     private void Update()
     {
-        if (_balanceKeyboard.Keyboard.status is TouchScreenKeyboard.Status.Done)
-            ChangeBalanceValue();
+        if (_balanceKeyboard.Keyboard is null) return;
+        if (_balanceKeyboard.Keyboard.status is TouchScreenKeyboard.Status.Done) ChangeBalanceValue();
     }
 
     public void DoOperation()
     {
-        _operationsCreator.CreatePurchaseOperation();
+        _operationsCreator.CreateOperation();
         var operation = _operationsCreator.CurrentOperation;
         if (operation == null) return;
 
