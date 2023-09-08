@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
-using System;
+using System.IO;
 
 public class OperationsCreator : MonoBehaviour
 {
@@ -11,14 +11,11 @@ public class OperationsCreator : MonoBehaviour
     [SerializeField] private TMP_Dropdown _purchaseCategories;
     [SerializeField] private TMP_Dropdown _addCategories;
 
-    [Header("Menus")]
-    [SerializeField] private GameObject _mainMenu;
-    [SerializeField] private GameObject _addOperationMenu;
-
     [Header("History of operations")]
     [SerializeField] private RectTransform[] _history;
 
     private short _operationsInHistoryCount;
+    private string _path;
     private string _purchaseType;
     private string _addType;
     private Operation _currentOperation;
@@ -46,13 +43,23 @@ public class OperationsCreator : MonoBehaviour
     {
         _purchaseOperationsData = new Dictionary<string, int>();
         _addOperationsData = new Dictionary<string, int>();
-
         _opener = GetComponent<MenuOpener>();
+        _path = Application.persistentDataPath + "/Operations Data.json";
 
-        for (int i = 0; i < _purchaseCategories.options.Count; i += 2)
-            _purchaseOperationsData.Add(_purchaseCategories.options[i].text, i);
-        for (int i = 0; i < _addCategories.options.Count; i += 2)
-            _addOperationsData.Add(_addCategories.options[i].text, i);
+        ProcessOperationsData(_purchaseOperationsData, _addOperationsData);
+        ProcessHistory(_path);
+    }
+
+    private void OnDisable()
+    {
+        string[] sums = new string[5], names = new string[5];
+        for (int i = 0; i < sums.Length; i++)
+        {
+            names[i] = _history[i].GetChild(1).GetComponent<TextMeshProUGUI>().text;
+            sums[i] = _history[i].GetChild(2).GetComponent<TextMeshProUGUI>().text;
+        }
+
+        SaveLoadSystem.SaveData(_path, new HistoryOfOperationsData(_operationsInHistoryCount, sums, names));
     }
 
     public void CreateOperation()
@@ -74,26 +81,43 @@ public class OperationsCreator : MonoBehaviour
                 _addType = _addCategories.options[_addCategories.value].text;
                 break;
         }
-
-        _opener.OpenMenu(_mainMenu);
-        _opener.CloseMenu(_addOperationMenu);
     }
 
     public void AddOperationInHistory()
     {
         if (_operationsInHistoryCount == 5) _operationsInHistoryCount = 0;
+        ChangeOperationsText(_operationType.options[_operationType.value].text, $"{_currentOperation.Value} RUB");
+    }
+
+    private void ProcessHistory(string path)
+    {
+        if (!File.Exists(path)) return;
+
+        var data = SaveLoadSystem.GetData<HistoryOfOperationsData>(path);
+
+        for (int i = 0; i < _history.Length; i++)
+            ChangeOperationsText(data.OperationNames[i], data.Sums[i]);
+        _operationsInHistoryCount = data.OperationsCount;
+    }
+
+    private void ChangeOperationsText(string operationText, string sumText)
+    {
         var operationType = _history[_operationsInHistoryCount].GetChild(1);
         var operationSum = _history[_operationsInHistoryCount].GetChild(2);
 
-        if (operationType.TryGetComponent(out TMP_Text type))
-        {
-            var text = _operationType.options[_operationType.value].text;
-            type.text = text;
-        }
-
-        if (operationSum.TryGetComponent(out TMP_Text sum))
-            sum.text = $"{_currentOperation.Value} RUB";
-
+        if (operationType.TryGetComponent(out TMP_Text type)) type.text = operationText;
+        if (operationSum.TryGetComponent(out TMP_Text sum)) sum.text = sumText;
         _operationsInHistoryCount++;
+    }
+
+    private void ProcessOperationsData(Dictionary<string, int> purchaseOperations, Dictionary<string, int> addOperations)
+    {
+        var index = 0;
+        for (int i = 0; i < _purchaseCategories.options.Count; i++)
+            purchaseOperations.Add(_purchaseCategories.options[i].text, index += 2);
+
+        index = 0;
+        for (int i = 0; i < _addCategories.options.Count; i++)
+            addOperations.Add(_addCategories.options[i].text, index += 2);
     }
 }

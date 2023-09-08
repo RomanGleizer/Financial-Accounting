@@ -1,4 +1,4 @@
-using System.Linq;
+using System.IO;
 using TMPro;
 using UnityEngine;
 
@@ -8,15 +8,31 @@ public class BalanceHandler : MonoBehaviour
     [SerializeField] private OperationsCreator _operationsCreator;
     [SerializeField] private KeyboardOpener _balanceKeyboard;
 
-    private int _balance;
+    private double _balance;
+    private string _path;
 
-    public int Balance => _balance;
+    public double Balance => _balance;
+
+    private void Awake()
+    {
+        _path = Application.persistentDataPath + "/Balance Data.json";
+
+        if (!File.Exists(_path)) return;
+
+        var data = SaveLoadSystem.GetData<BalanceData>(_path);
+        _balance = data.Balance;
+        _balanceText.text = $"{_balance} RUB";
+    }
 
     private void Update()
     {
-        if (_balanceKeyboard.Keyboard is null) return;
-        if (_balanceKeyboard.Keyboard.status is TouchScreenKeyboard.Status.Done) ChangeBalanceValue();
+        if (_balanceKeyboard.Keyboard is not null && 
+            _balanceKeyboard.Keyboard.status is TouchScreenKeyboard.Status.Done) 
+            ChangeBalanceValue();
     }
+
+    private void OnDisable() 
+        => SaveLoadSystem.SaveData(_path, new BalanceData(_balance));
 
     public void DoOperation()
     {
@@ -34,7 +50,7 @@ public class BalanceHandler : MonoBehaviour
         }
 
         _operationsCreator.AddOperationInHistory();
-        _balanceText.text = _balance.ToString() + " RUB";
+        _balanceText.text = $"{_balance} RUB";
     }
 
     private void ChangeBalanceValue()
@@ -42,6 +58,6 @@ public class BalanceHandler : MonoBehaviour
         if (!int.TryParse(_balanceKeyboard.Keyboard.text, out _)) return;
 
         _balance = int.Parse(_balanceKeyboard.Keyboard.text);
-        _balanceText.text = _balanceKeyboard.Keyboard.text + " RUB";
+        _balanceText.text = $"{_balanceKeyboard.Keyboard.text} RUB";
     }
 }
