@@ -19,9 +19,9 @@ public class OperationsCreator : MonoBehaviour
     private string _purchaseType;
     private string _addType;
     private Operation _currentOperation;
-    private MenuOpener _opener;
     private Dictionary<string, int> _purchaseOperationsData;
     private Dictionary<string, int> _addOperationsData;
+    private const int MaxHistoryLength = 5;
 
     public string PurchaseType => _purchaseType;
 
@@ -41,18 +41,17 @@ public class OperationsCreator : MonoBehaviour
 
     private void Awake()
     {
+        _path = Application.persistentDataPath + "/Operations Data.json";
         _purchaseOperationsData = new Dictionary<string, int>();
         _addOperationsData = new Dictionary<string, int>();
-        _opener = GetComponent<MenuOpener>();
-        _path = Application.persistentDataPath + "/Operations Data.json";
 
         ProcessOperationsData(_purchaseOperationsData, _addOperationsData);
         ProcessHistory(_path);
     }
 
-    private void OnDisable()
+    private void LateUpdate()
     {
-        string[] sums = new string[5], names = new string[5];
+        string[] sums = new string[MaxHistoryLength], names = new string[MaxHistoryLength];
         for (int i = 0; i < sums.Length; i++)
         {
             names[i] = _history[i].GetChild(1).GetComponent<TextMeshProUGUI>().text;
@@ -66,7 +65,8 @@ public class OperationsCreator : MonoBehaviour
     {
         if (!int.TryParse(_sum.text, out _)) return;
 
-        var operation = new Operation(int.Parse(_sum.text), (OperationType)_operationType.value);
+        var sum = int.Parse(_sum.text);
+        var operation = new Operation(sum, (OperationType)_operationType.value);
         if (operation.Value < 0) return;
 
         _sum.text = string.Empty;

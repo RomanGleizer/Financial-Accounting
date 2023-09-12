@@ -4,10 +4,10 @@ using System.Collections.Generic;
 [Serializable]
 public class StatisticsData
 {
-    public List<string> PurchaseSums;
-    public List<string> AddSums;
+    public List<int> PurchaseSums;
+    public List<int> AddSums;
 
-    public StatisticsData(List<string> purchaseSums, List<string> addSums)
+    public StatisticsData(List<int> purchaseSums, List<int> addSums)
     {
         PurchaseSums = purchaseSums;
         AddSums = addSums;

@@ -154,8 +154,8 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1496631395}
   - {fileID: 241384119}
+  - {fileID: 1496631395}
   - {fileID: 809871352}
   m_Father: {fileID: 519420032}
   m_RootOrder: -1
@@ -1145,7 +1145,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _balanceText: {fileID: 275371159}
   _operationsCreator: {fileID: 801372567}
-  _balanceKeyboard: {fileID: 275371163}
+  _keyboard: {fileID: 0}
 --- !u!1 &229926459
 GameObject:
   m_ObjectHideFlags: 0
@@ -1511,8 +1511,6 @@ GameObject:
   - component: {fileID: 275371160}
   - component: {fileID: 275371159}
   - component: {fileID: 275371158}
-  - component: {fileID: 275371162}
-  - component: {fileID: 275371163}
   m_Layer: 0
   m_Name: Balance
   m_TagString: Untagged
@@ -1651,47 +1649,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 275371156}
   m_CullTransparentMesh: 1
---- !u!114 &275371162
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 275371156}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Delegates:
-  - eventID: 4
-    callback:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 275371163}
-          m_TargetAssemblyTypeName: KeyboardOpener, Assembly-CSharp
-          m_MethodName: OpenKeyboard
-          m_Mode: 1
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
---- !u!114 &275371163
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 275371156}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 100ea0843f6152145b8825bc882f3f06, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &291318829
 GameObject:
   m_ObjectHideFlags: 0
@@ -6075,18 +6032,6 @@ MonoBehaviour:
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 809871351}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 801372566}
-        m_TargetAssemblyTypeName: MenuOpener, Assembly-CSharp
-        m_MethodName: OpenMenu
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 1496631394}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0

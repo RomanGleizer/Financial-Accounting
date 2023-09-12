@@ -2,13 +2,11 @@ using UnityEngine;
 
 public class KeyboardOpener : MonoBehaviour
 {
-    private TouchScreenKeyboard _keyboard;
-
-    public TouchScreenKeyboard Keyboard => _keyboard;
+    private TouchScreenKeyboard _operationKeyboard;
 
     public void OpenKeyboard()
     {
-        _keyboard = TouchScreenKeyboard.Open("", TouchScreenKeyboardType.Default);
+        _operationKeyboard = TouchScreenKeyboard.Open("");
         Invoke(nameof(HideInputField), 0.1f);   
     }
 

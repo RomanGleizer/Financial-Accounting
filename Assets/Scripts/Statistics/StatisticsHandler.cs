@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class StatisticsHandler : MonoBehaviour
@@ -15,25 +17,21 @@ public class StatisticsHandler : MonoBehaviour
 
     private void Awake()
     {
-        _operationType = GetComponent<TMP_Dropdown>();
+        _path = Application.persistentDataPath + "/Statistics Data.json";
         _operations = new Dictionary<string, int>();
+        _operationType = GetComponent<TMP_Dropdown>();
         _operationsCreator = GetComponent<OperationsCreator>();
-        _path = Application.dataPath + "/Statistics Data.json";
 
         ProcessStatistics(_path);
     }
 
-    private void OnApplicationQuit()
+    private void LateUpdate()
     {
-        List<string> purchaseSums = new List<string>(), addSums = new List<string>();
-
-        for (int i = 1; i < _purchaseStatistics.childCount; i += 2)
-            purchaseSums.Add(_purchaseStatistics.GetChild(i).GetComponent<TextMeshProUGUI>().text);
-        for (int i = 1; i < _addStatistics.childCount; i += 2)
-            addSums.Add(_addStatistics.GetChild(i).GetComponent<TextMeshProUGUI>().text);
-
+        var purchaseSums = SaveSum(_purchaseStatistics).ToList();
+        var addSums = SaveSum(_addStatistics).ToList();
         SaveLoadSystem.SaveData(_path, new StatisticsData(purchaseSums, addSums));
     }
+
     public void ChangeStatistics()
     {
         var operation = _operationsCreator.CurrentOperation;
@@ -67,14 +65,33 @@ public class StatisticsHandler : MonoBehaviour
         if (!File.Exists(path)) return;
 
         var data = SaveLoadSystem.GetData<StatisticsData>(path);
+        LoadStatistics(_purchaseStatistics, data.PurchaseSums);
+        LoadStatistics(_addStatistics, data.AddSums);
+    }
 
+    private IEnumerable<int> SaveSum(Transform statistics)
+    {
+        for (int i = 1; i < statistics.childCount; i += 2)
+        {
+            var text = statistics.GetChild(i).GetComponent<TextMeshProUGUI>().text;
+            var possibleSum = new string(text.TakeWhile(e => e != ' ').ToArray());
+            if (int.TryParse(possibleSum, out _))
+                yield return int.Parse(possibleSum);
+        }
+    }
+
+    private void LoadStatistics(Transform statistics, List<int> sums)
+    {
         var index = 0;
-        for (int i = 1; i < _purchaseStatistics.childCount; i += 2)
-            _purchaseStatistics.GetChild(i).GetComponent<TextMeshProUGUI>().text = data.PurchaseSums[index++];
+        for (int i = 0; i < sums.Count; i += 2)
+        {
+            var category = new string(statistics.GetChild(i).GetComponent<TextMeshProUGUI>().text.TakeWhile(e => e != ':').ToArray());
+            _operations[category] = sums[index++];
+        }
 
         index = 0;
-        for (int i = 1; i < _addStatistics.childCount; i += 2)
-            _addStatistics.GetChild(i).GetComponent<TextMeshProUGUI>().text = data.AddSums[index++];
+        for (int i = 1; i <= sums.Count; i += 2)
+            statistics.GetChild(i).GetComponent<TextMeshProUGUI>().text = $"{sums[index++]} RUB";
     }
 
     private void SwtichOperations(bool purchaseStatus, bool addStatus)
